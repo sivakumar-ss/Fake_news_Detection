@@ -171,7 +171,7 @@ export default function AnalysisResult({ analysis }) {
         )}
       </section>
 
-      <section className="result-card__sources result-card__limits">
+      <section className="result-card__sources">
         <div className="result-card__sources-heading">
           <h3>Limitations &amp; uncertainty</h3>
           <span className="badge">

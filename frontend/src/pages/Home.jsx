@@ -3,21 +3,15 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   ArrowRight,
   BarChart3,
-  BookOpen,
   BrainCircuit,
   CheckCircle2,
-  CircleHelp,
   Database,
   FileSearch,
   Layers,
   Link2,
-  Megaphone,
   Radar,
-  ScanSearch,
   ShieldAlert,
-  ShieldCheck,
   Sparkles,
-  TrendingDown,
 } from 'lucide-react'
 import CategoryBadge from '../components/CategoryBadge'
 import DemoBadge from '../components/DemoBadge'
@@ -63,91 +57,6 @@ const features = [
   },
 ]
 
-const steps = [
-  {
-    number: '01',
-    Icon: FileSearch,
-    title: 'Paste or link',
-    description:
-      'Drop in an article excerpt, a social post, or a public article URL. The backend extracts the readable article text.',
-  },
-  {
-    number: '02',
-    Icon: ScanSearch,
-    title: 'AI reads the writing',
-    description:
-      'The AI model estimates a category and an assessment score, then lists the specific signals it noticed — without inventing sources.',
-  },
-  {
-    number: '03',
-    Icon: Layers,
-    title: 'Review the evidence',
-    description:
-      'See key claims, supporting evidence, contradicting evidence and source references laid out in separate, colour-coded panels.',
-  },
-  {
-    number: '04',
-    Icon: ShieldCheck,
-    title: 'You verify',
-    description:
-      'Treat the result as a prompt for further research, then decide for yourself. The final judgement always stays with you.',
-  },
-]
-
-const reasons = [
-  {
-    Icon: TrendingDown,
-    title: 'Misinformation spreads fast',
-    description:
-      'Sensational claims travel further and faster than careful corrections. A quick second opinion before sharing helps break the chain.',
-  },
-  {
-    Icon: Megaphone,
-    title: 'Headlines are engineered',
-    description:
-      'Loaded language, urgency and outrage are designed to bypass reflection. Noticing those cues is a learnable media-literacy skill.',
-  },
-  {
-    Icon: CircleHelp,
-    title: 'Evidence often comes late',
-    description:
-      'By the time credible reporting corrects a claim, engagement has already peaked. Early caution costs little and matters most.',
-  },
-  {
-    Icon: BookOpen,
-    title: 'Verification is a habit',
-    description:
-      'Checking attribution, specificity and internal consistency turns passive scrolling into an active, repeatable review routine.',
-  },
-]
-
-const capabilities = [
-  {
-    Icon: Radar,
-    title: 'Reads writing-level cues',
-    description:
-      'Tone, attribution, specificity, loaded language, internal consistency and pressure to share.',
-  },
-  {
-    Icon: BookOpen,
-    title: 'Explains its reasoning',
-    description:
-      'Each result separates suspicious claims, supporting signals and contradicting signals in plain language.',
-  },
-  {
-    Icon: Link2,
-    title: 'Fetches article URLs',
-    description:
-      'Public links are downloaded and the main article text is extracted, skipping scripts, menus and ads.',
-  },
-  {
-    Icon: Database,
-    title: 'Keeps a local trail',
-    description:
-      'Analyses are stored in a local SQLite database so you can search, filter, revisit and delete your own history.',
-  },
-]
-
 const previewSignals = [
   { label: 'Claim indicators', value: '3 flagged', tone: 'warning' },
   { label: 'Source attribution', value: 'Partial', tone: 'warning' },
@@ -157,7 +66,7 @@ const previewSignals = [
 export default function Home() {
   const { hash } = useLocation()
 
-  // Smooth-scroll to anchored sections (e.g. the "Explore How It Works" CTA).
+  // Smooth-scroll to anchored sections (e.g. the "Explore Key Features" CTA).
   // Deferred one frame so it runs after Layout's scroll-to-top on route change.
   useEffect(() => {
     if (!hash) return undefined
@@ -195,10 +104,10 @@ export default function Home() {
               </Link>
               <Link
                 className="btn btn--ghost btn--lg"
-                to="/#how-it-works"
+                to="/#features-heading"
               >
                 <ArrowRight size={18} aria-hidden="true" />
-                Explore How It Works
+                Explore Key Features
               </Link>
             </div>
             <ul className="hero__points">
@@ -303,51 +212,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="trust-strip" aria-label="Project highlights">
-        <div className="container trust-strip__grid">
-          <div className="trust-strip__item">
-            <strong>4</strong>
-            <span>assessment categories</span>
-          </div>
-          <div className="trust-strip__item">
-            <strong>SQLite</strong>
-            <span>local analysis history</span>
-          </div>
-          <div className="trust-strip__item">
-            <strong>AI</strong>
-            <span>reasoning behind every result</span>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="section section--muted"
-        aria-labelledby="steps-heading"
-        id="how-it-works"
-      >
-        <div className="container">
-          <SectionHeading
-            eyebrow="How it works"
-            title="From link to reasoning in four steps."
-            description="A short, transparent workflow that keeps the final judgement with you."
-            id="steps-heading"
-          />
-
-          <ol className="step-grid">
-            {steps.map(({ number, Icon, title, description }) => (
-              <li className="step-card glass-card" key={number}>
-                <span className="step-card__number">{number}</span>
-                <span className="step-card__icon" aria-hidden="true">
-                  <Icon size={21} />
-                </span>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       <section className="section" aria-labelledby="features-heading">
         <div className="container">
           <SectionHeading
@@ -359,61 +223,6 @@ export default function Home() {
 
           <div className="feature-grid">
             {features.map(({ Icon, title, description }) => (
-              <article className="feature-card glass-card" key={title}>
-                <span className="feature-card__icon" aria-hidden="true">
-                  <Icon size={22} />
-                </span>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="section section--muted"
-        aria-labelledby="reasons-heading"
-      >
-        <div className="container reason-grid">
-          <div className="reason-copy">
-            <SectionHeading
-              eyebrow="Why fact checking matters"
-              title="A quick pause before you share changes the outcome."
-              description="Misinformation exploits attention, emotion and speed. Building a habit of verification is one of the most practical defences available to everyday readers."
-              id="reasons-heading"
-            />
-          </div>
-          <ul className="reason-list">
-            {reasons.map(({ Icon, title, description }) => (
-              <li key={title}>
-                <span className="reason-list__icon" aria-hidden="true">
-                  <Icon size={17} />
-                </span>
-                <div>
-                  <strong>{title}</strong>
-                  <p>{description}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section
-        className="section"
-        aria-labelledby="capabilities-heading"
-      >
-        <div className="container">
-          <SectionHeading
-            eyebrow="Analysis capabilities"
-            title="What the analysis actually does."
-            description="A clear scope of the signals reviewed during each submission — and what is stored locally."
-            id="capabilities-heading"
-          />
-
-          <div className="feature-grid feature-grid--two">
-            {capabilities.map(({ Icon, title, description }) => (
               <article className="feature-card glass-card" key={title}>
                 <span className="feature-card__icon" aria-hidden="true">
                   <Icon size={22} />

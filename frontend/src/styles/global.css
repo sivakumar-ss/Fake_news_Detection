@@ -385,38 +385,6 @@ code {
   white-space: nowrap;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.24rem 0.6rem;
-  border: 1px solid var(--neutral-border);
-  border-radius: 999px;
-  background: var(--neutral-soft);
-  color: var(--neutral-text);
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-
-.status-badge--success {
-  border-color: var(--success-border);
-  background: var(--success-soft);
-  color: var(--success-text);
-}
-
-.status-badge--danger {
-  border-color: var(--danger-border);
-  background: var(--danger-soft);
-  color: var(--danger-text);
-}
-
-.status-badge__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentcolor;
-}
-
 .text-tone--success {
   color: var(--success-text);
 }
