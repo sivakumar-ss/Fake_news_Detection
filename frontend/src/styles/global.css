@@ -27,6 +27,7 @@ body {
     var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 #root {
@@ -851,6 +852,49 @@ code {
   }
   100% {
     opacity: 0;
+  }
+}
+
+/* Mobile hardening ---------------------------------------------------- */
+
+@media (max-width: 768px) {
+  /* Prevent iOS from zooming inputs on focus (font-size < 16px triggers zoom). */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Comfortable touch targets (~44px minimum). */
+  .btn,
+  .icon-btn,
+  .nav-toggle,
+  .theme-toggle,
+  .site-nav__link {
+    min-height: 44px;
+  }
+
+  .icon-btn,
+  .nav-toggle,
+  .theme-toggle {
+    min-width: 44px;
+  }
+
+  .site-nav__link {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Safe-area insets for notched devices. */
+  .site-header__inner {
+    padding-inline: max(var(--gutter), env(safe-area-inset-left))
+      max(var(--gutter), env(safe-area-inset-right));
+  }
+
+  .site-footer__grid,
+  .site-footer__bottom {
+    padding-inline: max(var(--gutter), env(safe-area-inset-left))
+      max(var(--gutter), env(safe-area-inset-right));
   }
 }
 
