@@ -46,10 +46,11 @@ services:
         value: "20"
 
   # ---- Frontend: React + Vite (static site) ------------------------------
-  - type: static
+  # Static sites use type: web together with runtime: static.
+  # They have no compute plan, so no plan field is allowed here.
+  - type: web
     name: fakenews-frontend
     runtime: static
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
