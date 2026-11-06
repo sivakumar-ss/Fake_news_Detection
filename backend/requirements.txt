@@ -1,0 +1,15 @@
+# Core API
+Flask>=3.1,<4.0
+Flask-Cors>=6.0,<7.0
+python-dotenv>=1.1,<2.0
+requests>=2.32,<3.0
+
+# Article + feed extraction (BeautifulSoup, trafilatura; pulls in lxml)
+beautifulsoup4>=4.12,<5.0
+trafilatura>=2.0,<3.0
+
+# Google Gemini SDK (used from Phase 2 onward)
+google-genai>=1.0,<3.0
+
+# Tests (python -m pytest)
+pytest>=8.0,<10.0
