@@ -231,9 +231,9 @@ app deploys from GitHub in one click:
    (`GROQ_API_KEY`, or `GEMINI_API_KEY`). `SECRET_KEY` is generated
    automatically, and `FLASK_ENV=production` is set by the blueprint.
 4. After the first deploy succeeds, copy the real service URLs:
-   - `CORS_ORIGINS` → your frontend URL (e.g.
-     `https://fakenews-frontend.onrender.com`)
-   - `VITE_API_BASE_URL` → `https://fakenews-api.onrender.com/api`
+   - `CORS_ORIGINS` → your frontend URL
+     (`https://fakenews-frontend-djad.onrender.com`)
+   - `VITE_API_BASE_URL` → `https://fakenews-api-r381.onrender.com/api`
      (it is baked into the JS at **build** time, so saving triggers a
      frontend rebuild)
 5. Open the frontend URL — the **Detect** page should report the API as

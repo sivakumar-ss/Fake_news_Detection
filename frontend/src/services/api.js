@@ -24,14 +24,23 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const { response } = error
+    // The API answers JSON ({ message }) or HTML on proxy errors — only read
+    // `message` from a real object so string bodies never crash this handler.
+    const data = response?.data
+    const serverMessage =
+      data && typeof data === 'object' && !Array.isArray(data) ? data.message : undefined
+
     const message =
-      error.response?.data?.message ||
+      serverMessage ||
       (error.code === 'ECONNABORTED'
         ? 'The analysis took too long. Please try again.'
-        : 'The API did not respond. Is the Flask server running?')
+        : response
+          ? `The API returned an error (${response.status}). Please try again.`
+          : 'The API did not respond. Is the Flask server running?')
 
     const apiError = new Error(message, { cause: error })
-    apiError.status = error.response?.status
+    apiError.status = response?.status
     return Promise.reject(apiError)
   },
 )

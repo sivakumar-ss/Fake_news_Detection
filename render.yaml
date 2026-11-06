@@ -37,7 +37,7 @@ services:
         value: openai/gpt-oss-120b
       # Browser origin of the frontend static site — update after first deploy.
       - key: CORS_ORIGINS
-        value: https://fakenews-frontend.onrender.com
+        value: https://fakenews-frontend-djad.onrender.com
       # SQLite lives in backend/instance/ (ephemeral on the free plan).
       - key: DATABASE_PATH
         value: instance/fakenews.db
@@ -56,7 +56,7 @@ services:
     envVars:
       # Backend API base URL baked in at build time — update after first deploy.
       - key: VITE_API_BASE_URL
-        value: https://fakenews-api.onrender.com/api
+        value: https://fakenews-api-r381.onrender.com/api
       # Live mode: call the real API instead of demo data.
       - key: VITE_USE_SAMPLE_DATA
         value: "false"
