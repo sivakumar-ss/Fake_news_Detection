@@ -1,13 +1,7 @@
-import { useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   ArrowRight,
-  BarChart3,
-  BrainCircuit,
   CheckCircle2,
-  Database,
-  FileSearch,
-  Layers,
   Link2,
   Radar,
   ShieldAlert,
@@ -18,45 +12,6 @@ import DemoBadge from '../components/DemoBadge'
 import SectionHeading from '../components/SectionHeading'
 import { CATEGORY_META, CATEGORY_ORDER } from '../data/categories'
 
-const features = [
-  {
-    Icon: Radar,
-    title: 'Writing-level signals',
-    description:
-      'Every analysis looks at tone, attribution, loaded language and unsupported assertions — the cues that shape how a claim is presented.',
-  },
-  {
-    Icon: Layers,
-    title: 'Explainable categories',
-    description:
-      'Results are grouped into four clear categories and paired with suspicious claims, supporting signals and contradictions.',
-  },
-  {
-    Icon: Database,
-    title: 'A reviewable trail',
-    description:
-      'Saved analyses live in local SQLite, so you can revisit past submissions and compare the reasoning over time.',
-  },
-  {
-    Icon: FileSearch,
-    title: 'Text or URL input',
-    description:
-      'Paste an excerpt directly or submit a public article link — the backend extracts the readable text before analysis.',
-  },
-  {
-    Icon: BrainCircuit,
-    title: 'AI-assisted reasoning',
-    description:
-      'A language model reviews the writing and returns a category, an estimated score and the signals it noticed — never invented facts.',
-  },
-  {
-    Icon: BarChart3,
-    title: 'Dashboard & trends',
-    description:
-      'Real records from your own history power category distribution and analysis activity charts on the dashboard.',
-  },
-]
-
 const previewSignals = [
   { label: 'Claim indicators', value: '3 flagged', tone: 'warning' },
   { label: 'Source attribution', value: 'Partial', tone: 'warning' },
@@ -64,20 +19,6 @@ const previewSignals = [
 ]
 
 export default function Home() {
-  const { hash } = useLocation()
-
-  // Smooth-scroll to anchored sections (e.g. the "Explore Key Features" CTA).
-  // Deferred one frame so it runs after Layout's scroll-to-top on route change.
-  useEffect(() => {
-    if (!hash) return undefined
-    const target = document.getElementById(hash.slice(1))
-    if (!target) return undefined
-    const frame = requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [hash])
-
   return (
     <>
       <section className="hero">
@@ -101,13 +42,6 @@ export default function Home() {
               <Link className="btn btn--primary btn--lg" to="/analyze">
                 <Sparkles size={19} aria-hidden="true" />
                 Analyze News
-              </Link>
-              <Link
-                className="btn btn--ghost btn--lg"
-                to="/#features-heading"
-              >
-                <ArrowRight size={18} aria-hidden="true" />
-                Explore Key Features
               </Link>
             </div>
             <ul className="hero__points">
@@ -208,29 +142,6 @@ export default function Home() {
               <ShieldAlert size={15} />
               AI-assisted, not a verdict
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="features-heading">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Key features"
-            title="More context. Less blind sharing."
-            description="Designed around one question: what should you notice before trusting a claim?"
-            id="features-heading"
-          />
-
-          <div className="feature-grid">
-            {features.map(({ Icon, title, description }) => (
-              <article className="feature-card glass-card" key={title}>
-                <span className="feature-card__icon" aria-hidden="true">
-                  <Icon size={22} />
-                </span>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
-            ))}
           </div>
         </div>
       </section>
