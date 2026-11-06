@@ -53,6 +53,13 @@ services:
     runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
+    # SPA fallback: /analyze, /dashboard, /history, ... are React Router paths,
+    # not real files. Without this rewrite, a shared deep link (or page refresh)
+    # hits the static host's 404 instead of loading the app shell.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       # Backend API base URL baked in at build time — update after first deploy.
       - key: VITE_API_BASE_URL

@@ -241,6 +241,10 @@ app deploys from GitHub in one click:
 
 ### Render notes
 
+- **SPA routing:** the blueprint sets a rewrite (`/*` → `/index.html`) so
+  shared links like `/analyze` load the React app instead of a static 404.
+  For manually created static sites, add the same rule in **Settings →
+  Redirects/Rewrites** (Action: **Rewrite**).
 - **Ephemeral disk:** on the free plan `backend/instance/fakenews.db`
   resets on every redeploy. Attach a Render persistent disk (paid) or point
   `DATABASE_PATH` at an external database to keep history.
