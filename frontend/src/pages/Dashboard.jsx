@@ -17,11 +17,12 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 import CategoryBadge from '../components/CategoryBadge'
+import { DonutChart, TrendChart, TREND_DAYS, buildTrendPoints } from '../components/Charts'
 import DemoBadge from '../components/DemoBadge'
 import EmptyState from '../components/EmptyState'
 import StatCard from '../components/StatCard'
 import { CATEGORY_META, CATEGORY_ORDER } from '../data/categories'
-import { getDashboard } from '../services/analysisService'
+import { getDashboard, getHistory } from '../services/analysisService'
 import { USE_SAMPLE_DATA } from '../services/api'
 import { excerpt, formatShortDate } from '../utils/format'
 
@@ -32,11 +33,53 @@ const statIcons = {
   insufficient_evidence: CircleHelp,
 }
 
+const HISTORY_SAMPLE_LIMIT = 50
+
+function DashboardSkeleton() {
+  return (
+    <div className="page-skeleton" role="status" aria-label="Loading dashboard">
+      <div className="stats-grid">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div className="stat-skeleton" key={`stat-${index}`}>
+            <div className="skeleton" style={{ width: 34, height: 34, borderRadius: 9 }} />
+            <div className="skeleton" style={{ width: '55%', height: 26 }} />
+            <div className="skeleton" style={{ width: '75%', height: 12 }} />
+          </div>
+        ))}
+      </div>
+      <div className="dashboard-grid">
+        <div className="dashboard-panel glass-card">
+          <div className="skeleton" style={{ width: '45%', height: 18, marginBottom: 16 }} />
+          <div className="skeleton" style={{ width: '100%', height: 160, borderRadius: 12 }} />
+        </div>
+        <div className="insight-stack">
+          <div className="insight-card glass-card">
+            <div className="skeleton" style={{ width: '100%', height: 54 }} />
+          </div>
+          <div className="insight-card glass-card">
+            <div className="skeleton" style={{ width: '100%', height: 74 }} />
+          </div>
+        </div>
+      </div>
+      <div className="list-skeleton">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div className="list-skeleton__item" key={`row-${index}`}>
+            <div className="skeleton" style={{ width: '42%', height: 16 }} />
+            <div className="skeleton" style={{ width: '78%', height: 12 }} />
+          </div>
+        ))}
+      </div>
+      <span className="sr-only">Loading dashboard figures…</span>
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState({
     status: 'loading',
     data: null,
+    history: [],
     error: '',
   })
 
@@ -44,15 +87,27 @@ export default function Dashboard() {
     let active = true
     setState((current) => ({ ...current, status: 'loading', error: '' }))
 
-    getDashboard()
-      .then((data) => {
-        if (active) setState({ status: 'ready', data, error: '' })
+    Promise.all([
+      getDashboard(),
+      getHistory({ page: 1, perPage: HISTORY_SAMPLE_LIMIT }).catch(() => ({
+        items: [],
+      })),
+    ])
+      .then(([dashboard, history]) => {
+        if (!active) return
+        setState({
+          status: 'ready',
+          data: dashboard,
+          history: history.items || [],
+          error: '',
+        })
       })
       .catch((error) => {
         if (active) {
           setState({
             status: 'error',
             data: null,
+            history: [],
             error: error.message || 'Dashboard data could not be loaded.',
           })
         }
@@ -74,10 +129,7 @@ export default function Dashboard() {
             </span>
             <h1>Dashboard</h1>
           </div>
-          <div className="panel-loading glass-card" role="status">
-            <RefreshCw size={22} className="spin" aria-hidden="true" />
-            <p>Loading dashboard figures…</p>
-          </div>
+          <DashboardSkeleton />
         </div>
       </section>
     )
@@ -117,6 +169,7 @@ export default function Dashboard() {
   const data = state.data
   const total = data.total_analyses
   const recent = data.recent || []
+  const trendPoints = buildTrendPoints(state.history)
 
   return (
     <section className="page">
@@ -184,39 +237,42 @@ export default function Dashboard() {
               <div>
                 <h2>
                   <BarChart3 size={18} aria-hidden="true" />
-                  Category breakdown
+                  Category distribution
                 </h2>
                 <p>Share of all saved analyses.</p>
               </div>
               <span className="badge badge--soft">{total} saved</span>
             </div>
 
-            <div className="breakdown">
-              {CATEGORY_ORDER.map((key) => {
-                const meta = CATEGORY_META[key]
-                const count = data.categories[key] || 0
-                const percent = data.percentages[key] || 0
+            <div className="distribution">
+              <DonutChart data={data.categories} total={total} />
+              <div className="breakdown">
+                {CATEGORY_ORDER.map((key) => {
+                  const meta = CATEGORY_META[key]
+                  const count = data.categories[key] || 0
+                  const percent = data.percentages[key] || 0
 
-                return (
-                  <div className="breakdown__row" key={key}>
-                    <div className="breakdown__label">
-                      <span
-                        className={`breakdown__dot breakdown__dot--${meta.tone}`}
-                        aria-hidden="true"
-                      />
-                      <span>{meta.label}</span>
-                      <strong>{count}</strong>
+                  return (
+                    <div className="breakdown__row" key={key}>
+                      <div className="breakdown__label">
+                        <span
+                          className={`breakdown__dot breakdown__dot--${meta.tone}`}
+                          aria-hidden="true"
+                        />
+                        <span>{meta.label}</span>
+                        <strong>{count}</strong>
+                      </div>
+                      <div className="breakdown__track">
+                        <span
+                          className={`breakdown__bar breakdown__bar--${meta.tone}`}
+                          style={{ width: `${Math.max(percent, count ? 2 : 0)}%` }}
+                        />
+                      </div>
+                      <span className="breakdown__percent">{percent}%</span>
                     </div>
-                    <div className="breakdown__track">
-                      <span
-                        className={`breakdown__bar breakdown__bar--${meta.tone}`}
-                        style={{ width: `${Math.max(percent, count ? 2 : 0)}%` }}
-                      />
-                    </div>
-                    <span className="breakdown__percent">{percent}%</span>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
           </section>
 
@@ -256,6 +312,26 @@ export default function Dashboard() {
             </section>
           </div>
         </div>
+
+        <section className="dashboard-panel glass-card dashboard-panel--wide">
+          <div className="dashboard-panel__header">
+            <div>
+              <h2>
+                <TrendingUp size={18} aria-hidden="true" />
+                Analysis trends
+              </h2>
+              <p>
+                Daily analysis volume over the last {TREND_DAYS} days, computed
+                from your saved history records.
+              </p>
+            </div>
+            <span className="badge">{state.history.length} recent records</span>
+          </div>
+
+          <div className="trend">
+            <TrendChart points={trendPoints} />
+          </div>
+        </section>
 
         <section className="dashboard-panel glass-card dashboard-panel--recent">
           <div className="dashboard-panel__header">

@@ -1,17 +1,23 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import {
   ArrowRight,
   BarChart3,
+  BookOpen,
+  BrainCircuit,
   CheckCircle2,
+  CircleHelp,
   Database,
   FileSearch,
   Layers,
   Link2,
+  Megaphone,
   Radar,
   ScanSearch,
   ShieldAlert,
   ShieldCheck,
   Sparkles,
+  TrendingDown,
 } from 'lucide-react'
 import CategoryBadge from '../components/CategoryBadge'
 import DemoBadge from '../components/DemoBadge'
@@ -37,6 +43,24 @@ const features = [
     description:
       'Saved analyses live in local SQLite, so you can revisit past submissions and compare the reasoning over time.',
   },
+  {
+    Icon: FileSearch,
+    title: 'Text or URL input',
+    description:
+      'Paste an excerpt directly or submit a public article link — the backend extracts the readable text before analysis.',
+  },
+  {
+    Icon: BrainCircuit,
+    title: 'AI-assisted reasoning',
+    description:
+      'A language model reviews the writing and returns a category, an estimated score and the signals it noticed — never invented facts.',
+  },
+  {
+    Icon: BarChart3,
+    title: 'Dashboard & trends',
+    description:
+      'Real records from your own history power category distribution and analysis activity charts on the dashboard.',
+  },
 ]
 
 const steps = [
@@ -56,25 +80,98 @@ const steps = [
   },
   {
     number: '03',
+    Icon: Layers,
+    title: 'Review the evidence',
+    description:
+      'See key claims, supporting evidence, contradicting evidence and source references laid out in separate, colour-coded panels.',
+  },
+  {
+    number: '04',
     Icon: ShieldCheck,
     title: 'You verify',
     description:
-      'Review the explanation and evidence panels. Treat the result as a prompt for further research, never as a final verdict.',
+      'Treat the result as a prompt for further research, then decide for yourself. The final judgement always stays with you.',
+  },
+]
+
+const reasons = [
+  {
+    Icon: TrendingDown,
+    title: 'Misinformation spreads fast',
+    description:
+      'Sensational claims travel further and faster than careful corrections. A quick second opinion before sharing helps break the chain.',
+  },
+  {
+    Icon: Megaphone,
+    title: 'Headlines are engineered',
+    description:
+      'Loaded language, urgency and outrage are designed to bypass reflection. Noticing those cues is a learnable media-literacy skill.',
+  },
+  {
+    Icon: CircleHelp,
+    title: 'Evidence often comes late',
+    description:
+      'By the time credible reporting corrects a claim, engagement has already peaked. Early caution costs little and matters most.',
+  },
+  {
+    Icon: BookOpen,
+    title: 'Verification is a habit',
+    description:
+      'Checking attribution, specificity and internal consistency turns passive scrolling into an active, repeatable review routine.',
+  },
+]
+
+const capabilities = [
+  {
+    Icon: Radar,
+    title: 'Reads writing-level cues',
+    description:
+      'Tone, attribution, specificity, loaded language, internal consistency and pressure to share.',
+  },
+  {
+    Icon: BookOpen,
+    title: 'Explains its reasoning',
+    description:
+      'Each result separates suspicious claims, supporting signals and contradicting signals in plain language.',
+  },
+  {
+    Icon: Link2,
+    title: 'Fetches article URLs',
+    description:
+      'Public links are downloaded and the main article text is extracted, skipping scripts, menus and ads.',
+  },
+  {
+    Icon: Database,
+    title: 'Keeps a local trail',
+    description:
+      'Analyses are stored in a local SQLite database so you can search, filter, revisit and delete your own history.',
   },
 ]
 
 const previewSignals = [
+  { label: 'Claim indicators', value: '3 flagged', tone: 'warning' },
   { label: 'Source attribution', value: 'Partial', tone: 'warning' },
-  { label: 'Emotional language', value: 'Elevated', tone: 'danger' },
   { label: 'Internal consistency', value: 'Mostly clear', tone: 'success' },
 ]
 
 export default function Home() {
+  const { hash } = useLocation()
+
+  // Smooth-scroll to anchored sections (e.g. the "Explore How It Works" CTA).
+  // Deferred one frame so it runs after Layout's scroll-to-top on route change.
+  useEffect(() => {
+    if (!hash) return undefined
+    const target = document.getElementById(hash.slice(1))
+    if (!target) return undefined
+    const frame = requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [hash])
+
   return (
     <>
       <section className="hero">
-        <div className="hero__glow hero__glow--one" aria-hidden="true" />
-        <div className="hero__glow hero__glow--two" aria-hidden="true" />
         <div className="container hero__grid">
           <div className="hero__copy">
             <span className="hero__eyebrow">
@@ -86,18 +183,22 @@ export default function Home() {
               <span className="text-gradient">Verify Before You Share.</span>
             </h1>
             <p className="hero__lede">
-              Paste an article or a link. Get a transparent, category-based
-              reading of the writing — with the signals the model found, clearly
-              separated from fact.
+              FakeNewsDetect reads the writing — tone, attribution, loaded
+              language and unsupported claims — and returns a transparent,
+              category-based assessment with the signals clearly separated from
+              fact.
             </p>
             <div className="hero__actions">
               <Link className="btn btn--primary btn--lg" to="/analyze">
                 <Sparkles size={19} aria-hidden="true" />
-                Analyze a claim
+                Analyze News
               </Link>
-              <Link className="btn btn--ghost btn--lg" to="/dashboard">
-                <BarChart3 size={18} aria-hidden="true" />
-                View dashboard
+              <Link
+                className="btn btn--ghost btn--lg"
+                to="/#how-it-works"
+              >
+                <ArrowRight size={18} aria-hidden="true" />
+                Explore How It Works
               </Link>
             </div>
             <ul className="hero__points">
@@ -127,18 +228,20 @@ export default function Home() {
               </div>
 
               <h2 className="preview-card__title">
-                Demo · A viral post about a policy change
+                Sample · A viral post about a policy change
               </h2>
               <div className="preview-card__badges">
                 <CategoryBadge category="potentially_misleading" />
-                <span className="preview-card__score-inline">56 / 100</span>
+                <span className="preview-card__score-inline">
+                  Credibility estimate 56 / 100
+                </span>
               </div>
 
               <div className="preview-bar" aria-hidden="true">
                 <span style={{ width: '56%' }} />
               </div>
               <p className="preview-card__score-note">
-                Estimated assessment — not a truth probability.
+                Estimated indicator — not a probability of truth.
               </p>
 
               <div className="preview-signals">
@@ -150,6 +253,37 @@ export default function Home() {
                     </span>
                   </div>
                 ))}
+              </div>
+
+              <div className="preview-block">
+                <span className="preview-block__label">
+                  Evidence coverage <strong>64%</strong>
+                </span>
+                <div className="preview-coverage" aria-hidden="true">
+                  <span style={{ width: '64%' }} />
+                </div>
+              </div>
+
+              <div className="preview-block">
+                <span className="preview-block__label">Evidence summary</span>
+                <ul className="preview-evidence">
+                  <li className="evidence-good">
+                    <CheckCircle2 size={13} aria-hidden="true" />
+                    Attribution present to a named official
+                  </li>
+                  <li className="evidence-warn">
+                    <ShieldAlert size={13} aria-hidden="true" />
+                    Central figure claim lacks a cited reference
+                  </li>
+                </ul>
+              </div>
+
+              <div className="preview-source">
+                <Link2 size={14} aria-hidden="true" />
+                <span>
+                  Source attribution: <strong>example-news.test</strong> ·
+                  secondary references not verified
+                </span>
               </div>
 
               <p className="preview-card__note">
@@ -186,34 +320,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="features-heading">
-        <div className="container">
-          <SectionHeading
-            eyebrow="What this app does"
-            title="More context. Less blind sharing."
-            description="Designed around one question: what should you notice before trusting a claim?"
-            id="features-heading"
-          />
-
-          <div className="feature-grid">
-            {features.map(({ Icon, title, description }) => (
-              <article className="feature-card glass-card" key={title}>
-                <span className="feature-card__icon" aria-hidden="true">
-                  <Icon size={22} />
-                </span>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--muted" aria-labelledby="steps-heading">
+      <section
+        className="section section--muted"
+        aria-labelledby="steps-heading"
+        id="how-it-works"
+      >
         <div className="container">
           <SectionHeading
             eyebrow="How it works"
-            title="From link to reasoning in three steps."
+            title="From link to reasoning in four steps."
             description="A short, transparent workflow that keeps the final judgement with you."
             id="steps-heading"
           />
@@ -233,7 +348,85 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="categories-heading">
+      <section className="section" aria-labelledby="features-heading">
+        <div className="container">
+          <SectionHeading
+            eyebrow="Key features"
+            title="More context. Less blind sharing."
+            description="Designed around one question: what should you notice before trusting a claim?"
+            id="features-heading"
+          />
+
+          <div className="feature-grid">
+            {features.map(({ Icon, title, description }) => (
+              <article className="feature-card glass-card" key={title}>
+                <span className="feature-card__icon" aria-hidden="true">
+                  <Icon size={22} />
+                </span>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="section section--muted"
+        aria-labelledby="reasons-heading"
+      >
+        <div className="container reason-grid">
+          <div className="reason-copy">
+            <SectionHeading
+              eyebrow="Why fact checking matters"
+              title="A quick pause before you share changes the outcome."
+              description="Misinformation exploits attention, emotion and speed. Building a habit of verification is one of the most practical defences available to everyday readers."
+              id="reasons-heading"
+            />
+          </div>
+          <ul className="reason-list">
+            {reasons.map(({ Icon, title, description }) => (
+              <li key={title}>
+                <span className="reason-list__icon" aria-hidden="true">
+                  <Icon size={17} />
+                </span>
+                <div>
+                  <strong>{title}</strong>
+                  <p>{description}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section
+        className="section"
+        aria-labelledby="capabilities-heading"
+      >
+        <div className="container">
+          <SectionHeading
+            eyebrow="Analysis capabilities"
+            title="What the analysis actually does."
+            description="A clear scope of the signals reviewed during each submission — and what is stored locally."
+            id="capabilities-heading"
+          />
+
+          <div className="feature-grid feature-grid--two">
+            {capabilities.map(({ Icon, title, description }) => (
+              <article className="feature-card glass-card" key={title}>
+                <span className="feature-card__icon" aria-hidden="true">
+                  <Icon size={22} />
+                </span>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--muted" aria-labelledby="categories-heading">
         <div className="container">
           <SectionHeading
             eyebrow="The four categories"
@@ -275,7 +468,36 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="cta-heading">
+      <section
+        className="section"
+        aria-labelledby="disclaimer-heading"
+      >
+        <div className="container">
+          <div className="disclaimer-panel">
+            <span className="disclaimer-panel__icon" aria-hidden="true">
+              <ShieldAlert size={22} />
+            </span>
+            <div>
+              <h2 id="disclaimer-heading">Responsible AI disclaimer</h2>
+              <p>
+                FakeNewsDetect provides <strong>AI-assisted estimates</strong>{' '}
+                about how an article is written. It does not confirm whether a
+                claim is true or false, and it never replaces independent
+                verification or professional journalism.
+              </p>
+              <p>
+                Assessment scores are{' '}
+                <strong>estimated indicators, not probabilities of truth</strong>
+                . Always consult primary sources and reputable reporting before
+                deciding what to believe or share. Read the full{' '}
+                <Link to="/about">limits of AI-generated assessments</Link>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--muted" aria-labelledby="cta-heading">
         <div className="container">
           <div className="cta-panel glass-card">
             <div>
@@ -291,7 +513,7 @@ export default function Home() {
             <div className="cta-panel__actions">
               <Link className="btn btn--primary btn--lg" to="/analyze">
                 <Sparkles size={19} aria-hidden="true" />
-                Open the workspace
+                Analyze News
               </Link>
               <Link className="btn btn--ghost btn--lg" to="/history">
                 Browse history

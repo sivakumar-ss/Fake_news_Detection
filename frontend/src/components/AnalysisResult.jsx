@@ -10,6 +10,7 @@ import {
   Link2,
   ShieldAlert,
   Sparkles,
+  TriangleAlert,
   XCircle,
 } from 'lucide-react'
 import { categoryMeta } from '../data/categories'
@@ -168,6 +169,39 @@ export default function AnalysisResult({ analysis }) {
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="result-card__sources result-card__limits">
+        <div className="result-card__sources-heading">
+          <h3>Limitations &amp; uncertainty</h3>
+          <span className="badge">
+            <Info size={13} aria-hidden="true" />
+            Interpret with care
+          </span>
+        </div>
+        <ul className="limit-list">
+          <li>
+            <TriangleAlert size={16} aria-hidden="true" />
+            <span>
+              This assessment reads the writing only — it does not verify real-world
+              facts, people, studies or links.
+            </span>
+          </li>
+          <li>
+            <TriangleAlert size={16} aria-hidden="true" />
+            <span>
+              The score is an estimated indicator of writing signals, not a
+              probability that the content is true.
+            </span>
+          </li>
+          <li>
+            <TriangleAlert size={16} aria-hidden="true" />
+            <span>
+              Short, ambiguous or unusual text can be misread. Treat uncertain
+              cases as a prompt for independent research, not a verdict.
+            </span>
+          </li>
+        </ul>
       </section>
 
       <footer className="result-card__footer">

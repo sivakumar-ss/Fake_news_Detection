@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Menu, ScanSearch, Sparkles, X } from 'lucide-react'
+import { Menu, ShieldCheck, Sparkles, X } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 const links = [
   { to: '/', label: 'Home', end: true },
@@ -23,7 +24,7 @@ export default function Navbar() {
       <div className="container site-header__inner">
         <NavLink to="/" className="brand" aria-label="FakeNewsDetect home">
           <span className="brand__mark" aria-hidden="true">
-            <ScanSearch size={22} strokeWidth={2.2} />
+            <ShieldCheck size={21} strokeWidth={2.2} />
           </span>
           <span className="brand__name">
             FakeNews<span>Detect</span>
@@ -48,12 +49,13 @@ export default function Navbar() {
             </NavLink>
           ))}
           <Link className="btn btn--primary btn--sm site-nav__cta" to="/analyze">
-            <Sparkles size={16} aria-hidden="true" />
-            Analyze now
+            <Sparkles size={15} aria-hidden="true" />
+            Analyze Now
           </Link>
         </nav>
 
         <div className="site-header__actions">
+          <ThemeToggle />
           <button
             type="button"
             className="nav-toggle"

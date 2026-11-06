@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   AlertCircle,
+  ArrowDownUp,
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
@@ -15,6 +16,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import CategoryBadge from '../components/CategoryBadge'
+import ConfirmDialog from '../components/ConfirmDialog'
 import DemoBadge from '../components/DemoBadge'
 import EmptyState from '../components/EmptyState'
 import { CATEGORY_META, CATEGORY_ORDER } from '../data/categories'
@@ -27,13 +29,61 @@ import { excerpt, formatShortDate } from '../utils/format'
 
 const PAGE_SIZE = 6
 
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'oldest', label: 'Oldest first' },
+  { value: 'score_high', label: 'Score: high to low' },
+  { value: 'score_low', label: 'Score: low to high' },
+]
+
+function sortItems(items, sort) {
+  const copy = [...items]
+  switch (sort) {
+    case 'oldest':
+      return copy.sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at),
+      )
+    case 'score_high':
+      return copy.sort(
+        (a, b) => (b.assessment_score || 0) - (a.assessment_score || 0),
+      )
+    case 'score_low':
+      return copy.sort(
+        (a, b) => (a.assessment_score || 0) - (b.assessment_score || 0),
+      )
+    case 'newest':
+    default:
+      return copy.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at),
+      )
+  }
+}
+
+function HistorySkeleton() {
+  return (
+    <div className="list-skeleton" role="status" aria-label="Loading saved analyses">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div className="list-skeleton__item" key={`history-skeleton-${index}`}>
+          <div className="skeleton" style={{ width: '30%', height: 16 }} />
+          <div className="skeleton" style={{ width: '72%', height: 18 }} />
+          <div className="skeleton" style={{ width: '92%', height: 12 }} />
+          <div className="skeleton" style={{ width: '48%', height: 12 }} />
+        </div>
+      ))}
+      <span className="sr-only">Loading saved analyses…</span>
+    </div>
+  )
+}
+
 export default function History() {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState({ status: 'loading', items: [], error: '' })
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
+  const [sort, setSort] = useState('newest')
   const [page, setPage] = useState(1)
   const [deletingId, setDeletingId] = useState(null)
+  const [confirmTarget, setConfirmTarget] = useState(null)
   const [actionError, setActionError] = useState('')
 
   useEffect(() => {
@@ -63,16 +113,11 @@ export default function History() {
 
   useEffect(() => {
     setPage(1)
-  }, [query, category])
+  }, [query, category, sort])
 
-  async function handleDelete(item) {
-    if (
-      !window.confirm(
-        `Delete “${item.title || 'this analysis'}”? This cannot be undone.`,
-      )
-    ) {
-      return
-    }
+  async function handleConfirmDelete() {
+    const item = confirmTarget
+    if (!item) return
 
     setDeletingId(item.id)
     setActionError('')
@@ -83,23 +128,28 @@ export default function History() {
         ...current,
         items: current.items.filter((entry) => entry.id !== item.id),
       }))
+      setConfirmTarget(null)
     } catch (error) {
       setActionError(error.message || 'The analysis could not be deleted.')
+      setConfirmTarget(null)
     } finally {
       setDeletingId(null)
     }
   }
 
   const normalizedQuery = query.trim().toLowerCase()
-  const filtered = state.items.filter((item) => {
-    const matchesCategory = category === 'all' || item.category === category
-    const matchesQuery =
-      !normalizedQuery ||
-      `${item.title} ${item.content} ${item.explanation}`
-        .toLowerCase()
-        .includes(normalizedQuery)
-    return matchesCategory && matchesQuery
-  })
+  const filtered = sortItems(
+    state.items.filter((item) => {
+      const matchesCategory = category === 'all' || item.category === category
+      const matchesQuery =
+        !normalizedQuery ||
+        `${item.title} ${item.content} ${item.explanation}`
+          .toLowerCase()
+          .includes(normalizedQuery)
+      return matchesCategory && matchesQuery
+    }),
+    sort,
+  )
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const currentPage = Math.min(page, pages)
@@ -108,11 +158,12 @@ export default function History() {
     currentPage * PAGE_SIZE,
   )
 
-  const isFiltering = normalizedQuery || category !== 'all'
+  const isFiltering = normalizedQuery || category !== 'all' || sort !== 'newest'
 
   function clearFilters() {
     setQuery('')
     setCategory('all')
+    setSort('newest')
   }
 
   return (
@@ -176,6 +227,20 @@ export default function History() {
               ))}
             </select>
           </label>
+          <label className="history-toolbar__select">
+            <span className="sr-only">Sort analyses</span>
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              aria-label="Sort analyses"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <span className="history-toolbar__count">
             {filtered.length} {filtered.length === 1 ? 'result' : 'results'}
           </span>
@@ -188,12 +253,7 @@ export default function History() {
           </div>
         )}
 
-        {state.status === 'loading' && (
-          <div className="panel-loading glass-card" role="status">
-            <RefreshCw size={22} className="spin" aria-hidden="true" />
-            <p>Loading saved analyses…</p>
-          </div>
-        )}
+        {state.status === 'loading' && <HistorySkeleton />}
 
         {state.status === 'error' && (
           <div className="form-alert form-alert--block" role="alert">
@@ -293,7 +353,7 @@ export default function History() {
                     <button
                       type="button"
                       className="icon-btn icon-btn--danger"
-                      onClick={() => handleDelete(item)}
+                      onClick={() => setConfirmTarget(item)}
                       disabled={deletingId === item.id}
                       aria-label={`Delete ${item.title || 'analysis'}`}
                     >
@@ -334,12 +394,24 @@ export default function History() {
 
             {isFiltering && (
               <p className="page-disclaimer">
-                Filters apply to the items loaded in this view.
+                <ArrowDownUp size={15} aria-hidden="true" />
+                Filters and sorting apply to the items loaded in this view.
               </p>
             )}
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={Boolean(confirmTarget)}
+        title="Delete this analysis?"
+        message={`“${confirmTarget?.title || 'This analysis'}” will be permanently removed from your history. This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        busy={deletingId === confirmTarget?.id}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmTarget(null)}
+      />
     </section>
   )
 }

@@ -224,7 +224,7 @@ export default function AnalysisForm() {
               ) : (
                 <Sparkles size={18} aria-hidden="true" />
               )}
-              {loading ? 'Analyzing…' : 'Analyze'}
+              {loading ? 'Analyzing…' : 'Analyze News'}
             </button>
           </div>
 

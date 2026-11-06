@@ -1,57 +1,187 @@
+/* ---------------------------------------------------------------------------
+   FakeNewsDetect — design tokens
+   Premium light theme is the default; optional dark theme via [data-theme="dark"].
+   Components must read these variables only — no hard-coded colors.
+
+   Light palette:
+     background #F8FAFC · cards #FFFFFF · primary #2563EB · accent #0D9488
+     headings #0F172A · body #475569 · muted #94A3B8 · border #E2E8F0
+     success #16A34A · warning #D97706 · danger #DC2626
+--------------------------------------------------------------------------- */
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* Base palette */
-  --bg: #050a16;
-  --bg-soft: #07101f;
-  --bg-raised: #0a1528;
-  --surface: rgba(13, 24, 44, 0.68);
-  --surface-strong: rgba(17, 31, 56, 0.86);
-  --surface-soft: rgba(255, 255, 255, 0.035);
-  --surface-input: rgba(5, 12, 24, 0.72);
+  /* Base surfaces */
+  --bg: #f8fafc;
+  --bg-soft: #f1f5f9;
+  --bg-raised: #ffffff;
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
+  --surface-soft: #f8fafc;
+  --surface-2: #f1f5f9;
+  --surface-input: #ffffff;
+  --surface-hover: #f1f5f9;
 
-  /* Borders & text */
-  --border: rgba(148, 163, 184, 0.14);
-  --border-strong: rgba(148, 163, 184, 0.28);
-  --border-accent: rgba(96, 165, 250, 0.42);
-  --text: #eef4ff;
-  --text-muted: #a6b8d4;
-  --text-faint: #7c8eab;
+  /* Section bands & app chrome */
+  --band: #ffffff;
+  --band-border: #e2e8f0;
+  --header-bg: rgba(255, 255, 255, 0.88);
+  --header-border: #e2e8f0;
+  --footer-bg: #0f172a;
+  --footer-border: rgba(226, 232, 240, 0.12);
+  --footer-heading: #e2e8f0;
+  --footer-text: #94a3b8;
+  --footer-link: #cbd5e1;
+  --footer-brand-note: #93c5fd;
+  --overlay: rgba(15, 23, 42, 0.44);
 
-  /* Accents */
-  --accent: #4f8cff;
-  --accent-strong: #3b76ec;
-  --accent-cyan: #22d3ee;
-  --accent-soft: rgba(79, 140, 255, 0.14);
-  --accent-glow: rgba(79, 140, 255, 0.34);
+  /* Borders */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-accent: #2563eb;
+
+  /* Text: headings/strong, body, meta */
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-faint: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* Brand */
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.08);
+  --accent-soft-strong: rgba(37, 99, 235, 0.13);
+  --accent-glow: rgba(37, 99, 235, 0.22);
+  --accent-cyan: #0d9488;
+  --teal: #0d9488;
+  --teal-soft: rgba(13, 148, 136, 0.1);
 
   /* Semantic tones */
-  --success: #34d399;
-  --success-soft: rgba(52, 211, 153, 0.13);
-  --warning: #fbbf24;
-  --warning-soft: rgba(251, 191, 36, 0.13);
-  --danger: #fb7185;
-  --danger-soft: rgba(251, 113, 133, 0.13);
-  --neutral: #93c5fd;
-  --neutral-soft: rgba(147, 197, 253, 0.12);
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.09);
+  --success-text: #15803d;
+  --success-border: rgba(22, 163, 74, 0.32);
+
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.1);
+  --warning-text: #b45309;
+  --warning-border: rgba(217, 119, 6, 0.34);
+
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --danger-text: #b91c1c;
+  --danger-border: rgba(220, 38, 38, 0.32);
+
+  --neutral: #64748b;
+  --neutral-soft: rgba(100, 116, 139, 0.1);
+  --neutral-text: #475569;
+  --neutral-border: rgba(100, 116, 139, 0.3);
+
+  /* Demo/sample tone (kept subtle, purple-leaning like before) */
+  --demo: #7c3aed;
+  --demo-soft: rgba(124, 58, 237, 0.08);
+  --demo-border: rgba(124, 58, 237, 0.34);
+  --demo-text: #6d28d9;
 
   /* Type */
   --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* Shape & depth */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
+  /* Shape */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 
-  --shadow-card: 0 20px 60px rgba(1, 6, 18, 0.42);
-  --shadow-lg: 0 34px 100px rgba(0, 4, 14, 0.55);
-  --shadow-accent: 0 18px 50px rgba(79, 140, 255, 0.28);
-  --blur: 18px;
+  /* Depth — soft shadows, no glow */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px -12px rgba(15, 23, 42, 0.1);
+  --shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 40px -16px rgba(15, 23, 42, 0.18);
+  --shadow-lg: 0 24px 64px -20px rgba(15, 23, 42, 0.25);
+  --shadow-accent: 0 10px 28px -10px rgba(37, 99, 235, 0.45);
+  --blur: 10px;
 
   /* Layout */
   --max-width: 1180px;
   --gutter: clamp(1.15rem, 4vw, 2.5rem);
-  --header-height: 76px;
+  --header-height: 72px;
+}
+
+/* -------------------------------------------------------------------------
+   Optional dark theme — toggle via <html data-theme="dark"> (ThemeToggle).
+   Same variable contract, tuned for dark surfaces.
+------------------------------------------------------------------------- */
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #050a16;
+  --bg-soft: #07101f;
+  --bg-raised: #0a1528;
+  --surface: rgba(13, 24, 44, 0.86);
+  --surface-strong: rgba(17, 31, 56, 0.94);
+  --surface-soft: rgba(255, 255, 255, 0.035);
+  --surface-2: rgba(255, 255, 255, 0.045);
+  --surface-input: rgba(5, 12, 24, 0.72);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+
+  --band: #07101f;
+  --band-border: rgba(148, 163, 184, 0.14);
+  --header-bg: rgba(5, 10, 22, 0.78);
+  --header-border: rgba(148, 163, 184, 0.14);
+  --footer-bg: #040913;
+  --footer-border: rgba(148, 163, 184, 0.14);
+  --footer-heading: #dce8fb;
+  --footer-text: #8fa3c4;
+  --footer-link: #a6b8d4;
+  --footer-brand-note: #93c5fd;
+  --overlay: rgba(2, 6, 16, 0.68);
+
+  --border: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(148, 163, 184, 0.3);
+  --border-accent: rgba(96, 165, 250, 0.55);
+
+  --text: #eef4ff;
+  --text-muted: #a6b8d4;
+  --text-faint: #7c8eab;
+  --text-inverse: #0f172a;
+
+  --accent: #4f8cff;
+  --accent-strong: #3b76ec;
+  --accent-soft: rgba(79, 140, 255, 0.14);
+  --accent-soft-strong: rgba(79, 140, 255, 0.2);
+  --accent-glow: rgba(79, 140, 255, 0.34);
+  --accent-cyan: #2dd4bf;
+  --teal: #2dd4bf;
+  --teal-soft: rgba(45, 212, 191, 0.12);
+
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.13);
+  --success-text: #6ee7b7;
+  --success-border: rgba(52, 211, 153, 0.34);
+
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.13);
+  --warning-text: #fcd34d;
+  --warning-border: rgba(251, 191, 36, 0.34);
+
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.13);
+  --danger-text: #ffa5b2;
+  --danger-border: rgba(251, 113, 133, 0.34);
+
+  --neutral: #94a3b8;
+  --neutral-soft: rgba(148, 163, 184, 0.14);
+  --neutral-text: #cbd5e1;
+  --neutral-border: rgba(148, 163, 184, 0.32);
+
+  --demo: #a78bfa;
+  --demo-soft: rgba(139, 92, 246, 0.14);
+  --demo-border: rgba(167, 139, 250, 0.42);
+  --demo-text: #c4b5fd;
+
+  --shadow-card: 0 20px 60px rgba(1, 6, 18, 0.42);
+  --shadow-hover: 0 26px 70px rgba(1, 6, 18, 0.55);
+  --shadow-lg: 0 34px 100px rgba(0, 4, 14, 0.55);
+  --shadow-accent: 0 18px 50px rgba(79, 140, 255, 0.28);
 }

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
+  AlertTriangle,
   ArrowRight,
   BarChart3,
   BookOpen,
@@ -15,6 +16,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Sparkles,
+  Target,
   TriangleAlert,
 } from 'lucide-react'
 import CategoryBadge from '../components/CategoryBadge'
@@ -40,6 +42,14 @@ const capabilities = [
     description:
       'Analyses are stored in SQLite on the machine running the Flask backend, so they can be revisited or deleted.',
   },
+]
+
+const objectives = [
+  'Give readers a fast, explainable first pass over a suspicious article or post.',
+  'Surface writing-level signals — attribution, tone, loaded language — that casual reading often misses.',
+  'Present uncertainty honestly instead of a false-precision true/false verdict.',
+  'Keep every analysis reviewable through a local, searchable history trail.',
+  'Promote responsible sharing habits and independent verification, not blind trust in AI.',
 ]
 
 const limits = [
@@ -97,7 +107,57 @@ export default function About() {
         </div>
       </section>
 
-      <section className="section section--muted" aria-labelledby="about-categories">
+      <section
+        className="section section--muted"
+        aria-labelledby="problem-objectives-heading"
+      >
+        <div className="container">
+          <SectionHeading
+            eyebrow="Problem & objectives"
+            title="Why this project exists."
+            description="The problem it addresses, and the outcomes it aims to deliver."
+            id="problem-objectives-heading"
+          />
+
+          <div className="problem-objectives">
+            <article className="problem-card glass-card">
+              <span className="problem-card__icon" aria-hidden="true">
+                <AlertTriangle size={21} />
+              </span>
+              <h3>Problem statement</h3>
+              <p>
+                Misinformation spreads faster than corrections, and most readers
+                lack a quick way to sanity-check an article before sharing it.
+                Existing fact-checking is thorough but slow and manual, while a
+                plain true/false verdict from AI would be overconfident and easy
+                to misuse.
+              </p>
+              <p>
+                Readers need a lightweight, transparent first pass that flags
+                suspicious writing patterns and explains its reasoning — without
+                pretending to have verified the real world.
+              </p>
+            </article>
+
+            <article className="problem-card glass-card">
+              <span className="problem-card__icon" aria-hidden="true">
+                <Target size={21} />
+              </span>
+              <h3>Project objectives</h3>
+              <ul className="objective-list">
+                {objectives.map((objective) => (
+                  <li key={objective}>
+                    <CheckCircle2 size={16} aria-hidden="true" />
+                    <span>{objective}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="about-categories">
         <div className="container">
           <SectionHeading
             eyebrow="Assessment categories"

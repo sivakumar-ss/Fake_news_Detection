@@ -6,16 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An AI-assisted fake news detector built with React, Flask, and SQLite."
+      content="FakeNewsDetect — an AI-powered fake news detection system built with React, Flask and SQLite. Verify before you share."
     />
-    <meta name="theme-color" content="#060a12" />
+    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#050A16" media="(prefers-color-scheme: dark)" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <title>FakeNewsDetect — AI Fake News Detection</title>
+    <script>
+      // Apply saved theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var saved = localStorage.getItem('fnd-theme')
+          if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-theme', saved)
+          }
+        } catch (e) {
+          /* localStorage unavailable — keep default light theme */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

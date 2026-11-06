@@ -8,6 +8,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import AnalysisResult from '../components/AnalysisResult'
+import ConfirmDialog from '../components/ConfirmDialog'
 import DemoBadge from '../components/DemoBadge'
 import EmptyState from '../components/EmptyState'
 import {
@@ -16,11 +17,27 @@ import {
 } from '../services/analysisService'
 import { USE_SAMPLE_DATA } from '../services/api'
 
+function DetailSkeleton() {
+  return (
+    <div className="list-skeleton" role="status" aria-label="Loading the saved analysis">
+      <div className="list-skeleton__item">
+        <div className="skeleton" style={{ width: '34%', height: 16 }} />
+        <div className="skeleton" style={{ width: '68%', height: 26 }} />
+        <div className="skeleton" style={{ width: '100%', height: 96, borderRadius: 12 }} />
+        <div className="skeleton" style={{ width: '88%', height: 14 }} />
+        <div className="skeleton" style={{ width: '72%', height: 14 }} />
+      </div>
+      <span className="sr-only">Loading the saved analysis…</span>
+    </div>
+  )
+}
+
 export default function HistoryDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [state, setState] = useState({ status: 'loading', item: null, error: '' })
   const [deleting, setDeleting] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -56,9 +73,6 @@ export default function HistoryDetail() {
 
   async function handleDelete() {
     if (!state.item) return
-    if (!window.confirm('Delete this saved analysis? This cannot be undone.')) {
-      return
-    }
 
     setDeleting(true)
     try {
@@ -71,6 +85,7 @@ export default function HistoryDetail() {
         error: error.message || 'The analysis could not be deleted.',
       }))
       setDeleting(false)
+      setConfirmOpen(false)
     }
   }
 
@@ -82,12 +97,7 @@ export default function HistoryDetail() {
           Back to history
         </Link>
 
-        {state.status === 'loading' && (
-          <div className="panel-loading glass-card" role="status">
-            <RefreshCw size={22} className="spin" aria-hidden="true" />
-            <p>Loading the saved analysis…</p>
-          </div>
-        )}
+        {state.status === 'loading' && <DetailSkeleton />}
 
         {state.status === 'error' && (
           <div className="form-alert form-alert--block" role="alert">
@@ -127,7 +137,7 @@ export default function HistoryDetail() {
               <button
                 type="button"
                 className="btn btn--danger btn--sm"
-                onClick={handleDelete}
+                onClick={() => setConfirmOpen(true)}
                 disabled={deleting}
               >
                 <Trash2 size={15} aria-hidden="true" />
@@ -139,6 +149,17 @@ export default function HistoryDetail() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete this analysis?"
+        message={`“${state.item?.title || 'This analysis'}” will be permanently removed from your history. This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        busy={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </section>
   )
 }
