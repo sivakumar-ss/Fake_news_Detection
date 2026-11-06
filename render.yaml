@@ -1,0 +1,61 @@
+# ---------------------------------------------------------------------------
+# Render blueprint — deploys the whole project from this GitHub repo.
+#
+# Usage: Render dashboard → New → Blueprint → connect this repository.
+# Render reads this file and creates two services:
+#   1. fakenews-api      — Flask API behind gunicorn (web service)
+#   2. fakenews-frontend — built React/Vite app (static site)
+#
+# After the first deploy, copy the real service URLs (see README,
+# "Deploy to Render") into CORS_ORIGINS and VITE_API_BASE_URL.
+# ---------------------------------------------------------------------------
+
+services:
+  # ---- Backend: Flask API ------------------------------------------------
+  - type: web
+    name: fakenews-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    healthCheckPath: /api/health
+    envVars:
+      # Production mode: refuses to boot with a placeholder SECRET_KEY.
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        generateValue: true
+      # AI provider: set GROQ_API_KEY (or GEMINI_API_KEY) in the dashboard.
+      - key: AI_PROVIDER
+        value: auto
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      # Browser origin of the frontend static site — update after first deploy.
+      - key: CORS_ORIGINS
+        value: https://fakenews-frontend.onrender.com
+      # SQLite lives in backend/instance/ (ephemeral on the free plan).
+      - key: DATABASE_PATH
+        value: instance/fakenews.db
+      # Give slow news sites a little more time than local dev.
+      - key: FETCH_TIMEOUT_SECONDS
+        value: "20"
+
+  # ---- Frontend: React + Vite (static site) ------------------------------
+  - type: static
+    name: fakenews-frontend
+    runtime: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      # Backend API base URL baked in at build time — update after first deploy.
+      - key: VITE_API_BASE_URL
+        value: https://fakenews-api.onrender.com/api
+      # Live mode: call the real API instead of demo data.
+      - key: VITE_USE_SAMPLE_DATA
+        value: "false"

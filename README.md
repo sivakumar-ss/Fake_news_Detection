@@ -125,7 +125,8 @@ FakeNewsDetection/
 │   ├── config.py
 │   └── requirements.txt
 ├── .gitignore
-└── README.md
+├── README.md
+└── render.yaml          # Render blueprint (API web service + static frontend)
 ```
 
 The local `backend/.env`, `frontend/.env`, `backend/.venv/`, `backend/instance/`,
@@ -210,6 +211,44 @@ npm install
 cp .env.example .env
 npm run dev
 ```
+
+## Deploy to Render
+
+The repository ships a [`render.yaml`](render.yaml) blueprint so the whole
+app deploys from GitHub in one click:
+
+| Service | Render type | Runs |
+| --- | --- | --- |
+| `fakenews-api` | Web service (Python) | `pip install -r requirements.txt`, then `gunicorn app:app` on `$PORT`, health check `/api/health` |
+| `fakenews-frontend` | Static site | `cd frontend && npm install && npm run build`, published from `frontend/dist` |
+
+### Steps
+
+1. Push this repository to GitHub.
+2. In Render: **New → Blueprint → Connect a repository** → select this repo.
+   Render reads `render.yaml` and creates both services.
+3. Open the **fakenews-api** service → **Environment** and add your AI key
+   (`GROQ_API_KEY`, or `GEMINI_API_KEY`). `SECRET_KEY` is generated
+   automatically, and `FLASK_ENV=production` is set by the blueprint.
+4. After the first deploy succeeds, copy the real service URLs:
+   - `CORS_ORIGINS` → your frontend URL (e.g.
+     `https://fakenews-frontend.onrender.com`)
+   - `VITE_API_BASE_URL` → `https://fakenews-api.onrender.com/api`
+     (it is baked into the JS at **build** time, so saving triggers a
+     frontend rebuild)
+5. Open the frontend URL — the **Detect** page should report the API as
+   *Online* and show the active AI provider.
+
+### Render notes
+
+- **Ephemeral disk:** on the free plan `backend/instance/fakenews.db`
+  resets on every redeploy. Attach a Render persistent disk (paid) or point
+  `DATABASE_PATH` at an external database to keep history.
+- **Secrets:** values set in the Render dashboard override anything in
+  `.env`, so keys never need to live in the repo for deployment.
+- **Cold starts:** the free plan sleeps after inactivity; the first request
+  takes ~30–60 s while gunicorn boots.
+- Local development is unchanged: `python app.py` + `npm run dev`.
 
 ## Environment variables
 

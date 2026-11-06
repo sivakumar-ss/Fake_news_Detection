@@ -13,3 +13,6 @@ google-genai>=1.0,<3.0
 
 # Tests (python -m pytest)
 pytest>=8.0,<10.0
+
+# Production server used on Render (Linux). Local dev still uses python app.py.
+gunicorn>=22.0,<27.0
